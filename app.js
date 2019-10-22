@@ -3,6 +3,14 @@ const expressLayouts = require('express-ejs-layouts');
 const mongoose = require('mongoose');
 const passport1 = require('passport');
 const passport2 = require('passport');
+const videos = require('./models/videos')
+const path = require('path')
+const bodyParser = require('body-parser')
+const fs = require('fs')
+const nodemailer = require('nodemailer')
+const multer = require('multer')
+var assert = require('assert')
+const ejs_lint=require('ejs-lint');
 
 
 const flash = require('connect-flash');
@@ -14,6 +22,8 @@ const app = express();
 
 //require('./config/passport1')(passport1);
 //require('./config/passport2')(passport2);
+var videopath = ''
+var Description = ''
 
 
 // DB Config
@@ -44,18 +54,9 @@ app.use(
   })
 );
 
-// Passport middleware
-app.use(passport1.initialize());
-app.use(passport1.session());
-
-app.use(passport2.initialize());
-app.use(passport2.session());
-
-
-
-
-
-
+// Body-parser
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
 
 // Connect flash
 app.use(flash());
@@ -75,3 +76,5 @@ app.use('/users', require('./routes/users.js'));
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, console.log(`Server started on port ${PORT}`));
+
+module.exports = app;
