@@ -104,11 +104,7 @@ router.post('/student-register', (req, res) => {
           password
         });
 
-        bcrypt.genSalt(10, (err, salt) => {
-          bcrypt.hash(newUser.password, salt, (err, hash) => {
-            if (err) throw err;
-            newUser.password = password;
-            newUser
+          newUser
               .save()
               .then(user => {
                 req.flash(
@@ -127,9 +123,9 @@ router.post('/student-register', (req, res) => {
    });
    let mailOptions = {
      from: '"Alok Yadav" <alok5633y@gmail.com>',
-     to: "alok5633y@gmail.com",
+     to: req.body.email,
      subject: "Welcome to Courses.com",
-     text: "Welcome fellow student. We are very glad to inform you that you have successfully registered as the student at Courses.com. Enjoy Learning!"
+    text: "Welcome "+req.body.name+". We are very glad to inform you that you have successfully registered as the student at Courses.com. Enjoy Learning!"
    };
 
    transporter.sendMail(mailOptions, (error, info) => {
@@ -143,11 +139,11 @@ router.post('/student-register', (req, res) => {
    });
 
 
+
                 res.redirect('/users/student-login');
               })
               .catch(err => console.log(err));
-          });
-        });
+         
       }
     });
   }
@@ -198,22 +194,50 @@ router.post('/instructor-register', (req, res) => {
           password
         });
 
-        bcrypt.genSalt(10, (err, salt) => {
-          bcrypt.hash(newUser.password, salt, (err, hash) => {
-            if (err) throw err;
-            newUser.password = password;
-            newUser
+         newUser
               .save()
               .then(user => {
                 req.flash(
                   'success_msg',
                   'You are now registered and can log in'
                 );
+
+               let transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+     port: 465,
+     secure: true,
+     auth: {
+       user: 'alok5633y@gmail.com',
+       pass: 'aloky@1234'
+     }
+   });
+   let mailOptions = {
+     from: '"Alok Yadav" <alok5633y@gmail.com>',
+     to: req.body.email,
+     subject: "Welcome to Courses.com",
+    text: "Welcome "+req.body.name +". We are very glad to inform you that you have successfully registered as the teacher at Courses.com. Enjoy Teaching!"
+   };
+
+   transporter.sendMail(mailOptions, (error, info) => {
+     if (error){
+       return console.log(error);
+     }
+     else{
+       console.log("Email sent successfully");
+       console.log(mailOptions.to);
+     }
+   });
+
+
+
+               
+
+
                 res.redirect('/users/instructor-login');
               })
               .catch(err => console.log(err));
-          });
-        });
+
+        
       }
     });
   }
